@@ -17,8 +17,6 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     NFA a("hello");
     NFA b("nice!");
-    NFA c=NFAOperator::Cnt(a, b);
-    
-    cout<<1<<endl;
+    cout<<NFAOperator::Closure(a).match("hellohello")<<endl;
     return 0;
 }

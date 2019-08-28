@@ -14,7 +14,7 @@
 #include <list>
 #include <codecvt>
 #include <locale>
-
+#include <set>
 struct MatchFactor{
     enum class Type{
         Epsilon,Character,Range
@@ -121,6 +121,66 @@ public:
         statusList_.push_back(s);
         return s;
     }
+    
+    std::set<Status*> closure(Status *s){
+        std::set<Status*> res;
+        res.insert(s);
+        for(auto i=s->outEdges_.begin();i!=s->outEdges_.end();i++){
+            
+            if ((*i)->m_.type_==MatchFactor::Type::Epsilon) {
+                res.insert((*i)->end_);
+            }
+        }
+        return res;
+    }
+    std::set<Status*> closure(std::set<Status*> ss){
+        std::set<Status*> res;
+        for(auto i=ss.begin();i!=ss.end();i++){
+            res.insert(*i);
+            for(auto j=(*i)->outEdges_.begin();j!=(*i)->outEdges_.end();j++){
+                if ((*j)->m_.type_==MatchFactor::Type::Epsilon) {
+                    res.insert((*j)->end_);
+                }
+            }
+        }
+        return res;
+    }
+    std::set<Status*> move(std::set<Status*> T,wchar_t a){
+        std::set<Status*> res;
+        for(auto i=T.begin();i!=T.end();i++){
+            for(auto j=(*i)->outEdges_.begin();j!=(*i)->outEdges_.end();j++){
+                switch ((*j)->m_.type_) {
+                    case MatchFactor::Type::Character:
+                        if (a==(*j)->m_.c) {
+                            res.insert((*j)->end_);
+                        }
+                        break;
+                    case MatchFactor::Type::Range:
+                        if(a>=(*j)->m_.from&&a<=(*j)->m_.to){
+                            res.insert((*j)->end_);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return res;
+    }
+    
+    bool match(const std::string &str){
+        std::wstring ws=s2ws(str);
+        std::set<Status*> S=closure(startStatus);
+        for(size_t i=0;i<ws.size();i++){
+            S=closure(move(S, ws[i]));
+        }
+        if (S.count(acceptStatus)<1) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     NFA(const std::string &s){
         std::wstring ws=s2ws(s);
         StatusPool *statusPool=StatusPool::instance();
