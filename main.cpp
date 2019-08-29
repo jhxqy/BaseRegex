@@ -31,7 +31,7 @@ int main(int argc, const char * argv[]) {
     cout<<d.match("dddddd")<<endl;
 
     cout<<c.match("aaaabb")<<endl;
-    cout<<c.match("abababb")<<endl;
+    cout<<c.match("aaaaaaabb")<<endl;
     cout<<c.match("aaaab")<<endl;
     return 0;
 }

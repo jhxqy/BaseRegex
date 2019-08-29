@@ -123,26 +123,31 @@ public:
     }
     
     std::set<Status*> closure(Status *s){
-        std::set<Status*> res;
-        res.insert(s);
-        for(auto i=s->outEdges_.begin();i!=s->outEdges_.end();i++){
-            
-            if ((*i)->m_.type_==MatchFactor::Type::Epsilon) {
-                res.insert((*i)->end_);
-            }
-        }
-        return res;
+        
+        return closure(std::set<Status*>{s});
+
     }
     std::set<Status*> closure(std::set<Status*> ss){
+
         std::set<Status*> res;
-        for(auto i=ss.begin();i!=ss.end();i++){
+        std::list<Status*> stack;
+        for (auto i=ss.begin(); i!=ss.end(); i++) {
+            stack.push_back(*i);
             res.insert(*i);
-            for(auto j=(*i)->outEdges_.begin();j!=(*i)->outEdges_.end();j++){
-                if ((*j)->m_.type_==MatchFactor::Type::Epsilon) {
-                    res.insert((*j)->end_);
+        }
+        while (stack.size()>0) {
+            Status *t=stack.front();
+            stack.pop_front();
+            for(auto i=t->outEdges_.begin();i!=t->outEdges_.end();i++){
+                if((*i)->m_.type_==MatchFactor::Type::Epsilon){
+                    if (res.count((*i)->end_)<1) {
+                        res.insert((*i)->end_);
+                        stack.push_back((*i)->end_);
+                    }
                 }
             }
         }
+        
         return res;
     }
     std::set<Status*> move(std::set<Status*> T,wchar_t a){
@@ -183,8 +188,6 @@ public:
     
     NFA(const std::string &s){
         std::wstring ws=s2ws(s);
-        StatusPool *statusPool=StatusPool::instance();
-        EdgePool *edgePool=EdgePool::instance();
         startStatus=addStatus();
         Status *p=startStatus;
         Status *q;
