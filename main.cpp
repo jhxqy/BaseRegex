@@ -7,7 +7,7 @@
 //
 
 #include <iostream>
-#include "NFA.hpp"
+#include "Regex/NFA.hpp"
 #include <locale>
 #include <codecvt>
 using namespace std;
