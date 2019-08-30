@@ -9,12 +9,8 @@
 #include <stdio.h>
 #include<iostream>
 #include "Regex/NFA.hpp"
-using namespace std;
 #include "gtest/gtest.h"
-int Abs(int x)
-{
-    return x > 0 ? x : -x;
-}
+using namespace std;
 
 TEST(NFATEST,HandlerTrueReturn)
 {

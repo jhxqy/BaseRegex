@@ -83,8 +83,6 @@ class NFA{
     Status *acceptStatus;
 public:
     friend class NFAOperator;
-    NFA(){}
-    
     Edge* addEdge(Status *from,Status *to){
         Edge *e=EdgePool::instance()->newObject();
         e->start_=from;
@@ -199,6 +197,19 @@ public:
         p->acceptStatus_=true;
         acceptStatus=p;
     }
+    NFA(wchar_t c){
+        startStatus=addStatus();
+        acceptStatus=addStatus();
+        acceptStatus->acceptStatus_=true;
+        addEdge(startStatus, acceptStatus,c);
+    }
+    NFA(){
+        startStatus=addStatus();
+        acceptStatus=addStatus();
+        acceptStatus->acceptStatus_=true;
+        addEdge(startStatus, acceptStatus);
+    }
+    
 };
 class NFAOperator{
 public:
