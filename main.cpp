@@ -18,7 +18,7 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-    Parser p(R"((joij(4f4)49|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+    Parser p(R"((joij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
     p.Start();
     
     return 0;

@@ -11,6 +11,7 @@
 #include "Regex/NFA.hpp"
 #include "gtest/gtest.h"
 #include "Regex/Tokenizer.hpp"
+#include "Regex/Parser.hpp"
 using namespace std;
 
 TEST(NFATEST,HandlerTrueReturn)
@@ -57,4 +58,16 @@ TEST(TOKENIZER_TEST,HandlerTrueReturn){
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::CHAR,L"\n")));
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::CHAR,L"\\")));
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::STR,L"ddaf")));
+}
+TEST(Parser_TEST,HandlerTrueReturn){
+    Parser p1(R"((joij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+    Parser p2(R"((joij4f(449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+    Parser p3(R"((joij4f4(4)9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+    Parser p4(R"((joij4f4(4|6)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+    
+    EXPECT_NO_THROW(p1.Start());
+    EXPECT_THROW(p2.Start(),std::runtime_error);
+    EXPECT_NO_THROW(p3.Start());
+    EXPECT_NO_THROW(p4.Start());
+
 }
