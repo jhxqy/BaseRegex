@@ -17,7 +17,7 @@
  RegexList -> Regex RegexList|ε
  Regex     -> Regex + term|term
  term      -> factor *|factor
- factor    -> (Regex)|STR|CHAR
+ factor    -> (RegexList)|STR|CHAR
  */
 
 
@@ -27,7 +27,7 @@
  R'        -> + term R'|ε
  term      -> factor T'
  T'        -> *|ε
- factor    -> (Regex)|STR|CHAR
+ factor    -> (RegexList)|STR|CHAR
  */
 
 
@@ -51,66 +51,19 @@ class Parser{
             throw std::runtime_error("Parser error");
         }
     }
-    void RegexList(){
-        if (nowToken==nullptr) {
-            return ;
-        }
-        switch (nowToken->getTag()) {
-            case Token::Tag::SYMBOL:
-            case Token::Tag::CHAR:
-            case Token::Tag::STR:
-                Regex();
-                RegexList();
-                break;
-            default:
-                
-                break;
-        }
-    }
-    void Regex(){
-        term();
-        Rp();
-    }
-    void Rp(){
-
-        if (nowToken!=nullptr&&nowToken->typeEqual(Token(Token::Tag::OR,L"|"))) {
-            matchT(Token(Token::Tag::OR,L"|"));
-            term();
-            Rp();
-        }
-    }
-    void term(){
-        factor();
-        Tp();
-    }
-    void Tp(){
-
-        if(nowToken!=nullptr&&nowToken->typeEqual(Token(Token::Tag::CLOSURE,L"*"))){
-            matchT(Token(Token::Tag::CLOSURE,L"*"));
-        }
-    }
-    void factor(){
-        if (nowToken==nullptr) {
-            throw std::runtime_error("factor error nowToken is nullptr");
-        }
-        if(nowToken->equal(Token(Token::Tag::SYMBOL,L"("))){
-            matchA(Token(Token::Tag::SYMBOL,L"("));
-            Regex();
-            matchA(Token(Token::Tag::SYMBOL,L")"));
-        }else if(nowToken->typeEqual(Token(Token::Tag::STR,L""))){
-            matchT(Token(Token::Tag::STR,L""));
-            
-        }else if(nowToken->typeEqual(Token(Token::Tag::CHAR,L""))){
-            matchT(Token(Token::Tag::CHAR,L""));
-
-        }else{
-            throw std::runtime_error("factor error");
-        }
-    }
+    void RegexList();
+    void Regex();
+    void Rp();
+    void term();
+    void Tp();
+    void factor();
     
 public:
     void Start(){
         RegexList();
+        if(nowToken!=nullptr){
+            throw std::runtime_error("parse not end");
+        }
     }
     Parser(const std::string &s):t(s){
         nowToken=t.scan();
