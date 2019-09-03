@@ -11,19 +11,15 @@
 #include <locale>
 #include <codecvt>
 #include <vector>
-#include "Regex/JRegex.hpp"
+#include "Regex/Tokenizer.hpp"
+#include "Regex/Parser.hpp"
 using namespace std;
 
 
 
 int main(int argc, const char * argv[]) {
-    Tokenizer t(R"((fjoij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
-    vector<Token*> v;
-    Token* token;
-    while ((token=t.scan())!=nullptr) {
-        v.push_back(token);
-    }
-    cout<<1<<endl;
+    Parser p(R"((fjoij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+    p.Start();
     
     return 0;
 }

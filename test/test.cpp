@@ -10,7 +10,7 @@
 #include<iostream>
 #include "Regex/NFA.hpp"
 #include "gtest/gtest.h"
-#include "Regex/JRegex.hpp"
+#include "Regex/Tokenizer.hpp"
 using namespace std;
 
 TEST(NFATEST,HandlerTrueReturn)
