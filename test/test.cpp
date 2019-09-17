@@ -13,8 +13,7 @@
 #include "Regex/Tokenizer.hpp"
 #include "Regex/Parser.hpp"
 using namespace std;
-
-TEST(NFATEST,HandlerTrueReturn)
+GTEST_TEST(NFATEST, HandlerTrueReturn)
 {
     NFA a("a");
     EXPECT_TRUE(a.match("a"));
@@ -43,7 +42,7 @@ TEST(NFATEST,HandlerTrueReturn)
     EXPECT_FALSE(f.match("aabaab"));
     EXPECT_TRUE(f.match("aababb"));
 }
-TEST(TOKENIZER_TEST,HandlerTrueReturn){
+TEST(TOKENIZERTEST,HandlerTrueReturn){
     Tokenizer t(R"((fjoij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::SYMBOL,L"(")));
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::STR,L"fjoij4f449")));
@@ -59,15 +58,19 @@ TEST(TOKENIZER_TEST,HandlerTrueReturn){
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::CHAR,L"\\")));
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::STR,L"ddaf")));
 }
-TEST(Parser_TEST,HandlerTrueReturn){
+TEST(ParserTEST,HandlerTrueReturn){
     Parser p1(R"((joij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
     Parser p2(R"((joij4f(449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
     Parser p3(R"((joij4f4(4)9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
     Parser p4(R"((joij4f4(4|6)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
-    
+    Parser p5(R"((joij4f4(4*|6*)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+    Parser p6(R"((joij4f4(4**|6*)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+
     EXPECT_NO_THROW(p1.Start());
     EXPECT_THROW(p2.Start(),std::runtime_error);
     EXPECT_NO_THROW(p3.Start());
     EXPECT_NO_THROW(p4.Start());
+    EXPECT_NO_THROW(p5.Start());
+    EXPECT_THROW(p6.Start(),std::runtime_error);
 
 }
