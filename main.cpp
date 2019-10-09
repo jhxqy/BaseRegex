@@ -12,15 +12,19 @@
 #include <codecvt>
 #include <vector>
 #include "Regex/Tokenizer.hpp"
-#include "Regex/Parser.hpp"
+#include "Regex/BaseRegex.hpp"
 using namespace std;
 
 
 
 int main(int argc, const char * argv[]) {
-    BaseRegex regex("\\(\\)");
-    cout<<regex.match("()")<<endl;
-    cout<<regex.match("hell")<<endl;
+    BaseRegex regex("(hello*)world|nice!");
+    cout<<boolalpha<<regex.match("helloworld")<<endl;
+    cout<<boolalpha<<regex.match("hellohelloworld")<<endl;
+    cout<<boolalpha<<regex.match("nice!")<<endl;
+    cout<<boolalpha<<regex.match("world")<<endl;
+    cout<<boolalpha<<regex.match("worl")<<endl;
+
 
     return 0;
 }
