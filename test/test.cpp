@@ -13,7 +13,7 @@
 #include "Regex/Tokenizer.hpp"
 #include "Regex/Parser.hpp"
 using namespace std;
-GTEST_TEST(NFATEST, HandlerTrueReturn)
+GTEST_TEST(NFATEST, Match)
 {
     EdgePool *ep=new EdgePool();
     StatusPool *sp=new StatusPool();
@@ -44,7 +44,7 @@ GTEST_TEST(NFATEST, HandlerTrueReturn)
     EXPECT_FALSE(f.match("aabaab"));
     EXPECT_TRUE(f.match("aababb"));
 }
-TEST(TOKENIZERTEST,HandlerTrueReturn){
+TEST(TOKENIZERTEST,Token){
     Tokenizer t(R"((fjoij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::SYMBOL,L"(")));
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::STR,L"fjoij4f449")));
@@ -60,19 +60,24 @@ TEST(TOKENIZERTEST,HandlerTrueReturn){
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::CHAR,L"\\")));
     EXPECT_TRUE(t.scan()->equal(Token(Token::Tag::STR,L"ddaf")));
 }
-TEST(ParserTEST,HandlerTrueReturn){
-    Parser p1(R"((joij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
-    Parser p2(R"((joij4f(449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
-    Parser p3(R"((joij4f4(4)9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
-    Parser p4(R"((joij4f4(4|6)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
-    Parser p5(R"((joij4f4(4*|6*)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
-    Parser p6(R"((joij4f4(4**|6*)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
+TEST(ParserTEST,Parser){
 
-    EXPECT_NO_THROW(p1.Start());
-    EXPECT_THROW(p2.Start(),std::runtime_error);
-    EXPECT_NO_THROW(p3.Start());
-    EXPECT_NO_THROW(p4.Start());
-    EXPECT_NO_THROW(p5.Start());
-    EXPECT_THROW(p6.Start(),std::runtime_error);
+    EXPECT_NO_THROW(Parser(R"((joij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)"));
+    EXPECT_THROW(Parser(R"((joij4f(449|43f4g5)*asdfv\n\tdaf\n\\ddaf)"),std::runtime_error);
+    EXPECT_NO_THROW(Parser(R"((joij4f4(4)9|43f4g5)*asdfv\n\tdaf\n\\ddaf)"));
+    EXPECT_NO_THROW(Parser(R"((joij4f4(4|6)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)"));
+    EXPECT_NO_THROW(Parser(R"((joij4f4(4*|6*)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)"));
+    EXPECT_THROW(Parser(R"((joij4f4(4**|6*)*9|43f4g5)*asdfv\n\tdaf\n\\ddaf)"),std::runtime_error);
+
+}
+
+TEST(Regex,Function){
+    BaseRegex r1("\\(\\)");
+    EXPECT_TRUE(r1.match("()"));
+    BaseRegex r2("hello|world");
+    EXPECT_TRUE(r2.match("hello"));
+    EXPECT_TRUE(r2.match("world"));
+//    BaseRegex r3("nice(a*)");
+
 
 }

@@ -18,8 +18,9 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-    Parser parser("(hell(o*))|wor*ld*");
-    NFA n= parser.Start();
-    cout<<n.match("worworldld")<<endl;
+    BaseRegex regex("\\(\\)");
+    cout<<regex.match("()")<<endl;
+    cout<<regex.match("hell")<<endl;
+
     return 0;
 }

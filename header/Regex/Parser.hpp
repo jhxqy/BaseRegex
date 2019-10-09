@@ -51,6 +51,7 @@ class Parser{
     Token *nowToken;
     EdgePool *ep;
     StatusPool *sp;
+    NFA nfa_;
     void matchA(Token token){
         if(nowToken->equal(token)){
             delete nowToken;
@@ -75,23 +76,21 @@ class Parser{
     void factor(NFA &val);
     
 public:
-    NFA Start(){
-        NFA nfa(ep,sp);
-        RegexList(nfa);
+
+    Parser(const std::string &s):t(s),sp(new StatusPool),ep(new EdgePool),nfa_(ep,sp){
+        nowToken=t.scan();
+        RegexList(nfa_);
         if(nowToken!=nullptr){
             throw std::runtime_error("parse not end");
         }
-        return nfa;
-    }
-    Parser(const std::string &s):t(s){
-        sp=new StatusPool;
-        ep=new EdgePool;
-        nowToken=t.scan();
     }
     ~Parser(){
         delete sp;
         delete ep;
     }
+    bool match(const std::string &s){
+        return nfa_.match(s);
+    }
 };
-
+using BaseRegex=Parser;
 #endif /* Parser_hpp */
