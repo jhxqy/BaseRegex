@@ -35,8 +35,9 @@ public:
 template<typename T>
 class ObjectPool{
     std::list<T*> list_;
-    ObjectPool(){}
 public:
+    ObjectPool(){}
+
     static ObjectPool *instance(){
         static ObjectPool *p=nullptr;
         if (p==nullptr) {
@@ -78,13 +79,15 @@ std::wstring s2ws(const std::string& str);
 std::string ws2s(const std::wstring& wstr);
 class NFAOperator;
 class NFA{
+    EdgePool *edgePool_;
+    StatusPool *statusPool_;
     std::vector<Status*> statusList_;
     Status *startStatus;
     Status *acceptStatus;
 public:
     friend class NFAOperator;
     Edge* addEdge(Status *from,Status *to){
-        Edge *e=EdgePool::instance()->newObject();
+        Edge *e=edgePool_->newObject();
         e->start_=from;
         e->end_=to;
         from->outEdges_.push_back(e);
@@ -93,7 +96,7 @@ public:
         return e;
     }
     Edge* addEdge(Status *from,Status *to,wchar_t fromC,wchar_t toC){
-        Edge *e=EdgePool::instance()->newObject();
+        Edge *e=edgePool_->newObject();
         e->start_=from;
         e->end_=to;
         from->outEdges_.push_back(e);
@@ -104,7 +107,7 @@ public:
         return e;
     }
     Edge* addEdge(Status *from,Status *to,wchar_t c){
-        Edge *e=EdgePool::instance()->newObject();
+        Edge *e=edgePool_->newObject();
         e->start_=from;
         e->end_=to;
         from->outEdges_.push_back(e);
@@ -115,7 +118,7 @@ public:
     }
     
     Status* addStatus(){
-        Status *s=StatusPool::instance()->newObject();
+        Status *s=statusPool_->newObject();
         statusList_.push_back(s);
         return s;
     }
@@ -184,7 +187,7 @@ public:
     }
     
     
-    NFA(const std::string &s){
+    NFA(EdgePool *ep,StatusPool *sp,const std::string &s):edgePool_(ep),statusPool_(sp){
         std::wstring ws=s2ws(s);
         startStatus=addStatus();
         Status *p=startStatus;
@@ -197,13 +200,13 @@ public:
         p->acceptStatus_=true;
         acceptStatus=p;
     }
-    NFA(wchar_t c){
+    NFA(EdgePool *ep,StatusPool *sp,wchar_t c):edgePool_(ep),statusPool_(sp){
         startStatus=addStatus();
         acceptStatus=addStatus();
         acceptStatus->acceptStatus_=true;
         addEdge(startStatus, acceptStatus,c);
     }
-    NFA(){
+    NFA(EdgePool *ep,StatusPool *sp):edgePool_(ep),statusPool_(sp){
         startStatus=addStatus();
         acceptStatus=addStatus();
         acceptStatus->acceptStatus_=true;
@@ -215,7 +218,7 @@ class NFAOperator{
 public:
     
     static NFA Or(const NFA &a,const NFA &b){
-        NFA res;
+        NFA res(a.edgePool_,a.statusPool_);
         res.startStatus=res.addStatus();
         res.addEdge(res.startStatus, a.startStatus);
         res.addEdge(res.startStatus, b.startStatus);
@@ -237,7 +240,7 @@ public:
         return res;
     }
     static NFA Cnt(const NFA &a,const NFA &b){
-        NFA res;
+        NFA res(a.edgePool_,a.statusPool_);
         for(auto i=a.statusList_.begin();i!=a.statusList_.end();i++){
             res.statusList_.push_back(*i);
         }
@@ -252,7 +255,7 @@ public:
     }
     
     static NFA Closure(const NFA &a){
-        NFA res;
+        NFA res(a.edgePool_,a.statusPool_);
         res.startStatus=res.addStatus();
         for(auto i=a.statusList_.begin();i!=a.statusList_.end();i++){
             res.statusList_.push_back(*i);

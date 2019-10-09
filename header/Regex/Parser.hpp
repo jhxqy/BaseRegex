@@ -49,6 +49,8 @@ factor    -> (RegexList)|STR|CHAR   factor.val=(RegexList)|STR|CHAR
 class Parser{
     Tokenizer t;
     Token *nowToken;
+    EdgePool *ep;
+    StatusPool *sp;
     void matchA(Token token){
         if(nowToken->equal(token)){
             delete nowToken;
@@ -74,7 +76,7 @@ class Parser{
     
 public:
     NFA Start(){
-        NFA nfa;
+        NFA nfa(ep,sp);
         RegexList(nfa);
         if(nowToken!=nullptr){
             throw std::runtime_error("parse not end");
@@ -82,7 +84,13 @@ public:
         return nfa;
     }
     Parser(const std::string &s):t(s){
+        sp=new StatusPool;
+        ep=new EdgePool;
         nowToken=t.scan();
+    }
+    ~Parser(){
+        delete sp;
+        delete ep;
     }
 };
 

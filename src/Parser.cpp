@@ -11,7 +11,7 @@ void Parser::RegexList(NFA &val){
     if (nowToken==nullptr) {
         return ;
     }
-    NFA RegexVal,RegexListVal;
+    NFA RegexVal(ep,sp),RegexListVal(ep,sp);
     switch (nowToken->getTag()) {
         case Token::Tag::CHAR:
         case Token::Tag::STR:
@@ -25,20 +25,20 @@ void Parser::RegexList(NFA &val){
                           Parser::RegexList(RegexListVal);
                           val=NFAOperator::Cnt(RegexVal, RegexListVal);
             }else{
-                val=NFA();
+                val=NFA(ep,sp);
 
             }
             break;
     }
 }
 void Parser::Regex(NFA &val){
-    NFA termVal;
+    NFA termVal(ep,sp);
     Parser::term(termVal);
     Parser::Rp(val,termVal);
     
 }
 void Parser::Rp(NFA &val,NFA inh){
-    NFA termVal;
+    NFA termVal(ep,sp);
     if (nowToken!=nullptr&&nowToken->typeEqual(Token(Token::Tag::OR,L"|"))) {
         Parser::matchT(Token(Token::Tag::OR,L"|"));
         Parser::term(termVal);
@@ -49,7 +49,7 @@ void Parser::Rp(NFA &val,NFA inh){
 }
 
 void Parser::term(NFA &val){
-    NFA factorVal;
+    NFA factorVal(ep,sp);
     Parser::factor(factorVal);
     Parser::Tp(val,factorVal);
 }
@@ -76,11 +76,11 @@ void Parser::factor(NFA &val){
             Parser::matchA(Token(Token::Tag::SYMBOL,L")"));
         }
     }else if(nowToken->typeEqual(Token(Token::Tag::STR,L""))){
-        val=NFA(ws2s(nowToken->getLexme()));
+        val=NFA(ep,sp,ws2s(nowToken->getLexme()));
 
         Parser::matchT(Token(Token::Tag::STR,L""));
     }else if(nowToken->typeEqual(Token(Token::Tag::CHAR,L""))){
-        val=NFA(ws2s(nowToken->getLexme()));
+        val=NFA(ep,sp,ws2s(nowToken->getLexme()));
         Parser::matchT(Token(Token::Tag::CHAR,L""));
         
     }else{

@@ -15,10 +15,12 @@
 using namespace std;
 GTEST_TEST(NFATEST, HandlerTrueReturn)
 {
-    NFA a("a");
+    EdgePool *ep=new EdgePool();
+    StatusPool *sp=new StatusPool();
+    NFA a(ep,sp,"a");
     EXPECT_TRUE(a.match("a"));
     EXPECT_FALSE(a.match("b"));
-    NFA b("b");
+    NFA b(ep,sp,"b");
     EXPECT_TRUE(b.match("b"));
     EXPECT_FALSE(b.match("a"));
     NFA c=NFAOperator::Or(a, b);
@@ -34,7 +36,7 @@ GTEST_TEST(NFATEST, HandlerTrueReturn)
     EXPECT_TRUE(d.match("aaa"));
     EXPECT_TRUE(d.match("aab"));
     EXPECT_FALSE(d.match("acb"));
-    NFA e("abb");
+    NFA e(ep,sp,"abb");
     EXPECT_TRUE(e.match("abb"));
     EXPECT_FALSE(e.match("acb"));
 
