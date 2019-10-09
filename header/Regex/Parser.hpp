@@ -22,7 +22,7 @@
 
 
 /*
- RegexList -> Regex RegexList|ε
+ RegexList -> Regex RegexList|ε      RegexList.val=Regex.val + RegexList | ε
  Regex     -> term R'
  R'        -> + term R'|ε
  term      -> factor T'
@@ -30,6 +30,20 @@
  factor    -> (RegexList)|STR|CHAR
  */
 
+/*
+RegexList -> Regex RegexList1|ε     RegexList.val=Regex.val + RegexList1 | ε
+Regex     -> term R'                R'.inh=term.val;
+                                    Regex.val=R'.val
+                                
+R'        -> + term R'1|ε           Rp1.inh=rp.inh + term.val;
+                                    Rp.val= rp1.val
+                                    if Rp==ε , Rp.val=Rp.inh
+term      -> factor T'              Tp.inh=factor.val
+                                    term.value=tp.val
+T'        -> *|ε                    if(tp==*) tp.val=(tp.inh*)
+                                    if(tp==ε) tp.val=tp.inh
+factor    -> (RegexList)|STR|CHAR   factor.val=(RegexList)|STR|CHAR
+*/
 
 
 class Parser{
