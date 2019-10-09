@@ -18,8 +18,8 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-    Parser p(R"((joij4f449|43f4g5)*asdfv\n\tdaf\n\\ddaf)");
-    p.Start();
-    
+    Parser parser("(hell(o*))|wor*ld*");
+    NFA n= parser.Start();
+    cout<<n.match("worworldld")<<endl;
     return 0;
 }

@@ -31,7 +31,7 @@
  */
 
 /*
-RegexList -> Regex RegexList1|ε     RegexList.val=Regex.val + RegexList1 | ε
+RegexList -> Regex RegexList1|ε     RegexList.val=Regex.val con RegexList1.val | ε
 Regex     -> term R'                R'.inh=term.val;
                                     Regex.val=R'.val
                                 
@@ -65,19 +65,21 @@ class Parser{
             throw std::runtime_error("Parser error");
         }
     }
-    void RegexList();
-    void Regex();
-    void Rp();
-    void term();
-    void Tp();
-    void factor();
+    void RegexList(NFA &val);
+    void Regex(NFA &val);
+    void Rp(NFA &val,NFA inh);
+    void term(NFA &val);
+    void Tp(NFA &val,NFA inh);
+    void factor(NFA &val);
     
 public:
-    void Start(){
-        RegexList();
+    NFA Start(){
+        NFA nfa;
+        RegexList(nfa);
         if(nowToken!=nullptr){
             throw std::runtime_error("parse not end");
         }
+        return nfa;
     }
     Parser(const std::string &s):t(s){
         nowToken=t.scan();
