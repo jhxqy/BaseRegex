@@ -34,7 +34,9 @@ true
 ```
 code3 
 ```cpp
-BaseRegex regex("(hello*)world|nice!");    cout<<boolalpha<<regex.match("helloworld")<<endl;
+BaseRegex regex("(hello*)world|nice!");
+
+cout<<boolalpha<<regex.match("helloworld")<<endl;
 cout<<boolalpha<<regex.match("hellohelloworld")<<endl;
 cout<<boolalpha<<regex.match("nice!")<<endl;
 cout<<boolalpha<<regex.match("world")<<endl;
